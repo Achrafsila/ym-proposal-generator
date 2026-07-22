@@ -7,6 +7,10 @@ export const serviceItemSchema = z.object({
   description: z.string(),
   quantity: z.number().min(0.01, "La quantité doit être supérieure à 0."),
   unitPrice: z.number().min(0, "Le prix ne peut pas être négatif."),
+  /** Traces the catalog item this line was added from, if any (optional and
+   * backward-compatible — used to rebuild `serviceIds` when saving a
+   * proposal as a template). */
+  catalogId: z.string().optional(),
 });
 
 export const optionItemSchema = z.object({
@@ -14,6 +18,7 @@ export const optionItemSchema = z.object({
   name: z.string().min(1, "Le nom de l'option est requis."),
   description: z.string(),
   price: z.number().min(0, "Le prix ne peut pas être négatif."),
+  catalogId: z.string().optional(),
 });
 
 export const clientSchema = z.object({

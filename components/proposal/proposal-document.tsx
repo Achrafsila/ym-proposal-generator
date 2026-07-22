@@ -51,7 +51,7 @@ function CoverPage({ data }: { data: ProposalDocumentData }) {
   );
 }
 
-function ProjectPage({ data }: { data: ProposalDocumentData }) {
+function MissionPage({ data }: { data: ProposalDocumentData }) {
   return (
     <section className="proposal-page">
       <div className="proposal-header">
@@ -60,9 +60,9 @@ function ProjectPage({ data }: { data: ProposalDocumentData }) {
       </div>
       <hr className="proposal-rule" />
 
-      <h2 className="proposal-heading">Présentation du projet</h2>
+      <h2 className="proposal-heading">Présentation de la mission</h2>
 
-      <p className="proposal-subheading">Contexte</p>
+      <p className="proposal-subheading">Besoin du client</p>
       <p className="proposal-prewrap">{data.project.context || "—"}</p>
 
       <p className="proposal-subheading">Objectifs</p>
@@ -83,10 +83,7 @@ function ProjectPage({ data }: { data: ProposalDocumentData }) {
   );
 }
 
-function ServicesPage({ data }: { data: ProposalDocumentData }) {
-  const selectedOptions = data.options.filter((option) => option.selected);
-  const futureOptions = data.options.filter((option) => !option.selected);
-
+function OfferPage({ data }: { data: ProposalDocumentData }) {
   return (
     <section className="proposal-page">
       <div className="proposal-header">
@@ -95,7 +92,7 @@ function ServicesPage({ data }: { data: ProposalDocumentData }) {
       </div>
       <hr className="proposal-rule" />
 
-      <h2 className="proposal-heading">Prestations</h2>
+      <h2 className="proposal-heading">Offre proposée</h2>
 
       {data.financial.showPriceDetails ? (
         <table className="proposal-table">
@@ -126,7 +123,7 @@ function ServicesPage({ data }: { data: ProposalDocumentData }) {
           </tbody>
           <tfoot>
             <tr>
-              <td colSpan={3}>Sous-total prestations</td>
+              <td colSpan={3}>Total de l&apos;offre principale</td>
               <td className="num">{formatCurrency(data.totals.servicesSubtotal)}</td>
             </tr>
           </tfoot>
@@ -137,9 +134,27 @@ function ServicesPage({ data }: { data: ProposalDocumentData }) {
           <span className="value">{formatCurrency(data.totals.servicesSubtotal)}</span>
         </div>
       )}
+    </section>
+  );
+}
 
-      <p className="proposal-subheading">Options sélectionnées</p>
-      {selectedOptions.length > 0 ? (
+function OptionsAndTermsPage({ data }: { data: ProposalDocumentData }) {
+  const { totals } = data;
+  const includedOptions = data.options.filter((option) => option.selected);
+  const futureOptions = data.options.filter((option) => !option.selected);
+
+  return (
+    <section className="proposal-page">
+      <div className="proposal-header">
+        <span className="proposal-monogram">YM</span>
+        <span className="proposal-wordmark">YM Studio</span>
+      </div>
+      <hr className="proposal-rule" />
+
+      <h2 className="proposal-heading">Options et conditions</h2>
+
+      <p className="proposal-subheading">Options incluses</p>
+      {includedOptions.length > 0 ? (
         <table className="proposal-table">
           <thead>
             <tr>
@@ -148,7 +163,7 @@ function ServicesPage({ data }: { data: ProposalDocumentData }) {
             </tr>
           </thead>
           <tbody>
-            {selectedOptions.map((option, index) => (
+            {includedOptions.map((option, index) => (
               <tr key={index}>
                 <td>
                   <div>{option.name || "—"}</div>
@@ -164,18 +179,18 @@ function ServicesPage({ data }: { data: ProposalDocumentData }) {
           </tbody>
           <tfoot>
             <tr>
-              <td>Total options sélectionnées</td>
+              <td>Total options incluses</td>
               <td className="num">{formatCurrency(data.totals.optionsTotal)}</td>
             </tr>
           </tfoot>
         </table>
       ) : (
-        <p className="proposal-muted">Aucune option sélectionnée pour cette proposition.</p>
+        <p className="proposal-muted">Aucune option incluse dans cette proposition.</p>
       )}
 
       {data.financial.showFutureOptionsInPdf && futureOptions.length > 0 && (
         <>
-          <p className="proposal-subheading">Évolutions futures possibles (non incluses)</p>
+          <p className="proposal-subheading">Options non incluses (possibilités futures)</p>
           <table className="proposal-table">
             <thead>
               <tr>
@@ -201,22 +216,6 @@ function ServicesPage({ data }: { data: ProposalDocumentData }) {
           </table>
         </>
       )}
-    </section>
-  );
-}
-
-function InvestmentPage({ data }: { data: ProposalDocumentData }) {
-  const { totals } = data;
-
-  return (
-    <section className="proposal-page">
-      <div className="proposal-header">
-        <span className="proposal-monogram">YM</span>
-        <span className="proposal-wordmark">YM Studio</span>
-      </div>
-      <hr className="proposal-rule" />
-
-      <h2 className="proposal-heading">Investissement et conditions</h2>
 
       <div className="proposal-recap">
         {totals.discountAmount > 0 && (
@@ -279,7 +278,9 @@ function InvestmentPage({ data }: { data: ProposalDocumentData }) {
       <div className="proposal-signatures">
         <div className="proposal-signature-box">
           <span className="proposal-signature-label">Client</span>
-          <span className="proposal-signature-line">Date et signature précédées de « Bon pour accord »</span>
+          <span className="proposal-signature-line">
+            Date et signature précédées de « Bon pour accord »
+          </span>
         </div>
         <div className="proposal-signature-box">
           <span className="proposal-signature-label">YM Studio</span>
@@ -295,9 +296,9 @@ export function ProposalDocument({ data }: { data: ProposalDocumentData }) {
   return (
     <div className="proposal-document">
       <CoverPage data={data} />
-      <ProjectPage data={data} />
-      <ServicesPage data={data} />
-      <InvestmentPage data={data} />
+      <MissionPage data={data} />
+      <OfferPage data={data} />
+      <OptionsAndTermsPage data={data} />
     </div>
   );
 }

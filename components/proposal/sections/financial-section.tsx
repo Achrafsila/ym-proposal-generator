@@ -5,6 +5,7 @@ import { useFormContext } from "react-hook-form";
 import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
 import { SectionCard } from "@/components/ui/section-card";
+import { SegmentedToggle } from "@/components/ui/segmented-toggle";
 import { Select } from "@/components/ui/select";
 import { ToggleField } from "@/components/ui/toggle-field";
 import type { ProposalTotals } from "@/lib/calculations";
@@ -37,9 +38,11 @@ export function FinancialSection({ totals }: { totals: ProposalTotals }) {
   const {
     register,
     watch,
+    setValue,
     formState: { errors },
   } = useFormContext<ProposalFormValues>();
   const discountType = watch("financial.discountType");
+  const showPriceDetails = watch("financial.showPriceDetails");
 
   return (
     <SectionCard title="Récapitulatif financier">
@@ -47,11 +50,11 @@ export function FinancialSection({ totals }: { totals: ProposalTotals }) {
         <FormField label="Type de remise" htmlFor="financial.discountType">
           <Select id="financial.discountType" {...register("financial.discountType")}>
             <option value="percent">Pourcentage (%)</option>
-            <option value="amount">Montant (€)</option>
+            <option value="amount">Montant (MAD)</option>
           </Select>
         </FormField>
         <FormField
-          label={discountType === "amount" ? "Remise (€)" : "Remise (%)"}
+          label={discountType === "amount" ? "Remise (MAD)" : "Remise (%)"}
           htmlFor="financial.discountValue"
           error={errors.financial?.discountValue?.message}
         >
@@ -78,7 +81,7 @@ export function FinancialSection({ totals }: { totals: ProposalTotals }) {
           />
         </FormField>
         <FormField
-          label="Acompte (€)"
+          label="Acompte (MAD)"
           htmlFor="financial.depositAmount"
           error={errors.financial?.depositAmount?.message}
         >
@@ -92,15 +95,22 @@ export function FinancialSection({ totals }: { totals: ProposalTotals }) {
         </FormField>
       </div>
 
-      <div className="flex flex-col gap-1 border-t border-border pt-4">
+      <div className="flex flex-col gap-4 border-t border-border pt-4">
+        <div className="flex flex-col gap-1.5">
+          <span className="text-sm font-medium text-foreground">Affichage des prix dans le PDF</span>
+          <SegmentedToggle
+            label="Affichage des prix dans le PDF"
+            value={showPriceDetails ? "detailed" : "global"}
+            onChange={(value) => setValue("financial.showPriceDetails", value === "detailed")}
+            options={[
+              { value: "detailed", label: "Prix détaillés" },
+              { value: "global", label: "Montant global" },
+            ]}
+          />
+        </div>
         <ToggleField
-          label="Afficher le détail des prix dans le PDF"
-          description="Si désactivé, seul un montant global apparaît pour l'offre principale."
-          {...register("financial.showPriceDetails")}
-        />
-        <ToggleField
-          label="Afficher les options non sélectionnées comme possibilités futures"
-          description="Ajoute une liste des options futures possibles dans le PDF."
+          label="Afficher les options non incluses comme possibilités futures"
+          description="Ajoute une liste des options non incluses dans le PDF, à titre indicatif."
           {...register("financial.showFutureOptionsInPdf")}
         />
       </div>
@@ -109,8 +119,8 @@ export function FinancialSection({ totals }: { totals: ProposalTotals }) {
         id="financial-summary"
         className="flex flex-col gap-2 rounded-lg bg-muted/60 p-4 text-sm"
       >
-        <SummaryRow label="Sous-total prestations" value={totals.servicesSubtotal} />
-        <SummaryRow label="Total options sélectionnées" value={totals.optionsTotal} />
+        <SummaryRow label="Offre principale" value={totals.servicesSubtotal} />
+        <SummaryRow label="Options incluses" value={totals.optionsTotal} />
         <SummaryRow label="Remise" value={-totals.discountAmount} />
         <div className="border-t border-border pt-2">
           <SummaryRow label="Total HT" value={totals.totalHT} emphasis />
@@ -118,7 +128,7 @@ export function FinancialSection({ totals }: { totals: ProposalTotals }) {
         <SummaryRow label="TVA" value={totals.tvaAmount} />
         <SummaryRow label="Total TTC" value={totals.totalTTC} emphasis />
         <SummaryRow label="Acompte" value={totals.depositAmount} />
-        <SummaryRow label="Solde restant" value={totals.balanceDue} emphasis />
+        <SummaryRow label="Solde" value={totals.balanceDue} emphasis />
       </dl>
     </SectionCard>
   );

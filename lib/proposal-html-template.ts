@@ -68,16 +68,16 @@ function coverPageHtml(data: ProposalDocumentData): string {
   </section>`;
 }
 
-function projectPageHtml(data: ProposalDocumentData): string {
+function missionPageHtml(data: ProposalDocumentData): string {
   const { project } = data;
 
   return `
   <section class="proposal-page">
     ${brandHeader()}
     <hr class="proposal-rule" />
-    <h2 class="proposal-heading">Présentation du projet</h2>
+    <h2 class="proposal-heading">Présentation de la mission</h2>
 
-    <p class="proposal-subheading">Contexte</p>
+    <p class="proposal-subheading">Besoin du client</p>
     <p class="proposal-prewrap">${fallback(project.context)}</p>
 
     <p class="proposal-subheading">Objectifs</p>
@@ -97,10 +97,8 @@ function projectPageHtml(data: ProposalDocumentData): string {
   </section>`;
 }
 
-function servicesPageHtml(data: ProposalDocumentData): string {
-  const { services, options, financial, totals } = data;
-  const selectedOptions = options.filter((option) => option.selected);
-  const futureOptions = options.filter((option) => !option.selected);
+function offerPageHtml(data: ProposalDocumentData): string {
+  const { services, financial, totals } = data;
 
   const servicesBlock = financial.showPriceDetails
     ? `
@@ -135,7 +133,7 @@ function servicesPageHtml(data: ProposalDocumentData): string {
       </tbody>
       <tfoot>
         <tr>
-          <td colspan="3">Sous-total prestations</td>
+          <td colspan="3">Total de l'offre principale</td>
           <td class="num">${esc(formatCurrency(totals.servicesSubtotal))}</td>
         </tr>
       </tfoot>
@@ -146,8 +144,22 @@ function servicesPageHtml(data: ProposalDocumentData): string {
       <span class="value">${esc(formatCurrency(totals.servicesSubtotal))}</span>
     </div>`;
 
-  const selectedOptionsBlock =
-    selectedOptions.length > 0
+  return `
+  <section class="proposal-page">
+    ${brandHeader()}
+    <hr class="proposal-rule" />
+    <h2 class="proposal-heading">Offre proposée</h2>
+    ${servicesBlock}
+  </section>`;
+}
+
+function optionsAndTermsPageHtml(data: ProposalDocumentData): string {
+  const { financial, terms, totals, reference, options } = data;
+  const includedOptions = options.filter((option) => option.selected);
+  const futureOptions = options.filter((option) => !option.selected);
+
+  const includedOptionsBlock =
+    includedOptions.length > 0
       ? `
     <table class="proposal-table">
       <thead>
@@ -157,7 +169,7 @@ function servicesPageHtml(data: ProposalDocumentData): string {
         </tr>
       </thead>
       <tbody>
-        ${selectedOptions
+        ${includedOptions
           .map(
             (option) => `
         <tr>
@@ -176,17 +188,17 @@ function servicesPageHtml(data: ProposalDocumentData): string {
       </tbody>
       <tfoot>
         <tr>
-          <td>Total options sélectionnées</td>
+          <td>Total options incluses</td>
           <td class="num">${esc(formatCurrency(totals.optionsTotal))}</td>
         </tr>
       </tfoot>
     </table>`
-      : `<p class="proposal-muted">Aucune option sélectionnée pour cette proposition.</p>`;
+      : `<p class="proposal-muted">Aucune option incluse dans cette proposition.</p>`;
 
   const futureOptionsBlock =
     financial.showFutureOptionsInPdf && futureOptions.length > 0
       ? `
-    <p class="proposal-subheading">Évolutions futures possibles (non incluses)</p>
+    <p class="proposal-subheading">Options non incluses (possibilités futures)</p>
     <table class="proposal-table">
       <thead>
         <tr>
@@ -215,21 +227,6 @@ function servicesPageHtml(data: ProposalDocumentData): string {
     </table>`
       : "";
 
-  return `
-  <section class="proposal-page">
-    ${brandHeader()}
-    <hr class="proposal-rule" />
-    <h2 class="proposal-heading">Prestations</h2>
-    ${servicesBlock}
-    <p class="proposal-subheading">Options sélectionnées</p>
-    ${selectedOptionsBlock}
-    ${futureOptionsBlock}
-  </section>`;
-}
-
-function investmentPageHtml(data: ProposalDocumentData): string {
-  const { financial, terms, totals, reference } = data;
-
   const discountRow =
     totals.discountAmount > 0
       ? `
@@ -249,7 +246,11 @@ function investmentPageHtml(data: ProposalDocumentData): string {
   <section class="proposal-page">
     ${brandHeader()}
     <hr class="proposal-rule" />
-    <h2 class="proposal-heading">Investissement et conditions</h2>
+    <h2 class="proposal-heading">Options et conditions</h2>
+
+    <p class="proposal-subheading">Options incluses</p>
+    ${includedOptionsBlock}
+    ${futureOptionsBlock}
 
     <div class="proposal-recap">
       ${discountRow}
@@ -314,7 +315,7 @@ function investmentPageHtml(data: ProposalDocumentData): string {
 }
 
 export function buildProposalDocumentHtml(data: ProposalDocumentData): string {
-  return `<div class="proposal-document">${coverPageHtml(data)}${projectPageHtml(
+  return `<div class="proposal-document">${coverPageHtml(data)}${missionPageHtml(
     data
-  )}${servicesPageHtml(data)}${investmentPageHtml(data)}</div>`;
+  )}${offerPageHtml(data)}${optionsAndTermsPageHtml(data)}</div>`;
 }

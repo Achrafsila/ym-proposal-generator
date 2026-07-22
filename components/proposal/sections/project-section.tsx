@@ -15,23 +15,27 @@ export function ProjectSection() {
   } = useFormContext<ProposalFormValues>();
 
   return (
-    <SectionCard title="Présentation du projet">
+    <SectionCard title="Présentation de la mission">
       <FormField
-        label="Intitulé du projet"
+        label="Intitulé de la proposition"
         htmlFor="project.title"
         required
         error={errors.project?.title?.message}
       >
         <Input id="project.title" {...register("project.title")} />
       </FormField>
-      <FormField label="Contexte ou besoin du client" htmlFor="project.context">
-        <Textarea id="project.context" rows={5} {...register("project.context")} />
+      <FormField label="Présentation du besoin" htmlFor="project.context">
+        <Textarea id="project.context" rows={4} {...register("project.context")} />
       </FormField>
-      <FormField label="Objectifs du projet" htmlFor="project.objectives">
-        <Textarea id="project.objectives" rows={5} {...register("project.objectives")} />
+      <FormField label="Objectifs attendus" htmlFor="project.objectives">
+        <Textarea id="project.objectives" rows={4} {...register("project.objectives")} />
       </FormField>
       <FormField label="Délai estimatif" htmlFor="project.timeline">
-        <Input id="project.timeline" placeholder="ex. 6 à 8 semaines" {...register("project.timeline")} />
+        <Input
+          id="project.timeline"
+          placeholder="ex. 6 à 8 semaines"
+          {...register("project.timeline")}
+        />
       </FormField>
     </SectionCard>
   );

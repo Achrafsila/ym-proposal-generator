@@ -11,16 +11,17 @@ import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
 import { SectionCard } from "@/components/ui/section-card";
 import { Textarea } from "@/components/ui/textarea";
-import { optionLibraryStorage } from "@/features/catalog/services/option-library-storage";
+import { serviceLibraryStorage } from "@/features/catalog/services/service-library-storage";
 import type { CatalogItem } from "@/features/catalog/types";
-import { OPTION_CATEGORIES } from "@/features/catalog/types";
+import { SERVICE_CATEGORIES } from "@/features/catalog/types";
 import { useCatalogStorage } from "@/features/catalog/use-catalog-storage";
-import { catalogItemToOptionItem } from "@/features/proposal/catalog-to-proposal-item";
+import { catalogItemToServiceItem } from "@/features/proposal/catalog-to-proposal-item";
+import { computeServiceTotal } from "@/lib/calculations";
 import { formatCurrency } from "@/lib/format";
 import { numberFieldOptions } from "@/lib/form-helpers";
 import type { ProposalFormValues } from "@/lib/proposal-schema";
 
-interface OptionRowProps {
+interface ServiceRowProps {
   index: number;
   isOpen: boolean;
   onToggleOpen: () => void;
@@ -31,7 +32,7 @@ interface OptionRowProps {
   canMoveDown: boolean;
 }
 
-function OptionRow({
+function ServiceRow({
   index,
   isOpen,
   onToggleOpen,
@@ -40,15 +41,16 @@ function OptionRow({
   onRemove,
   canMoveUp,
   canMoveDown,
-}: OptionRowProps) {
+}: ServiceRowProps) {
   const {
     register,
     watch,
     formState: { errors },
   } = useFormContext<ProposalFormValues>();
-  const name = watch(`options.${index}.name`);
-  const price = watch(`options.${index}.price`);
-  const selected = watch(`options.${index}.selected`);
+  const name = watch(`services.${index}.name`);
+  const quantity = watch(`services.${index}.quantity`);
+  const unitPrice = watch(`services.${index}.unitPrice`);
+  const total = computeServiceTotal({ quantity: quantity || 0, unitPrice: unitPrice || 0 });
 
   return (
     <CollapsibleRow
@@ -59,67 +61,75 @@ function OptionRow({
       onRemove={onRemove}
       canMoveUp={canMoveUp}
       canMoveDown={canMoveDown}
-      editLabel="Modifier l'option"
-      removeLabel="Supprimer l'option"
-      moveUpLabel="Monter l'option"
-      moveDownLabel="Descendre l'option"
+      editLabel="Modifier la prestation"
+      removeLabel="Supprimer la prestation"
+      moveUpLabel="Monter la prestation"
+      moveDownLabel="Descendre la prestation"
       summary={
-        <div className="flex items-center gap-3">
-          <input
-            type="checkbox"
-            aria-label={`Inclure « ${name || "cette option"} » dans le prix`}
-            className="h-4 w-4 shrink-0 rounded border-border text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
-            {...register(`options.${index}.selected`)}
-          />
-          <div className="flex min-w-0 flex-col gap-0.5">
-            <span className="truncate text-sm font-medium text-foreground">
-              {name || "Option sans nom"}
-            </span>
-            <span className="text-xs text-muted-foreground">
-              {formatCurrency(price || 0)} ·{" "}
-              {selected ? "Incluse dans le prix" : "Non incluse (possibilité future)"}
-            </span>
-          </div>
+        <div className="flex flex-col gap-0.5">
+          <span className="truncate text-sm font-medium text-foreground">
+            {name || "Prestation sans nom"}
+          </span>
+          <span className="text-xs text-muted-foreground">
+            {quantity || 0} × {formatCurrency(unitPrice || 0)} = {formatCurrency(total)}
+          </span>
         </div>
       }
     >
-      <div className="grid gap-3 sm:grid-cols-[1fr_8rem]">
+      <div className="grid gap-3 sm:grid-cols-[1fr_6rem_8rem]">
         <FormField
-          label="Nom de l'option"
-          htmlFor={`options.${index}.name`}
-          error={errors.options?.[index]?.name?.message}
+          label="Nom de la prestation"
+          htmlFor={`services.${index}.name`}
+          error={errors.services?.[index]?.name?.message}
         >
-          <Input id={`options.${index}.name`} {...register(`options.${index}.name`)} />
+          <Input id={`services.${index}.name`} {...register(`services.${index}.name`)} />
         </FormField>
         <FormField
-          label="Prix (MAD)"
-          htmlFor={`options.${index}.price`}
-          error={errors.options?.[index]?.price?.message}
+          label="Quantité"
+          htmlFor={`services.${index}.quantity`}
+          error={errors.services?.[index]?.quantity?.message}
         >
           <Input
-            id={`options.${index}.price`}
+            id={`services.${index}.quantity`}
+            type="number"
+            min={0}
+            step={1}
+            {...register(`services.${index}.quantity`, numberFieldOptions())}
+          />
+        </FormField>
+        <FormField
+          label="Prix unitaire (MAD)"
+          htmlFor={`services.${index}.unitPrice`}
+          error={errors.services?.[index]?.unitPrice?.message}
+        >
+          <Input
+            id={`services.${index}.unitPrice`}
             type="number"
             min={0}
             step={0.01}
-            {...register(`options.${index}.price`, numberFieldOptions())}
+            {...register(`services.${index}.unitPrice`, numberFieldOptions())}
           />
         </FormField>
       </div>
-      <FormField label="Description" htmlFor={`options.${index}.description`} className="mt-3">
+      <FormField
+        label="Description courte"
+        htmlFor={`services.${index}.description`}
+        className="mt-3"
+      >
         <Textarea
-          id={`options.${index}.description`}
+          id={`services.${index}.description`}
           rows={2}
-          {...register(`options.${index}.description`)}
+          {...register(`services.${index}.description`)}
         />
       </FormField>
     </CollapsibleRow>
   );
 }
 
-export function OptionsSection() {
+export function OfferSection() {
   const { control } = useFormContext<ProposalFormValues>();
-  const { fields, append, remove, move } = useFieldArray({ control, name: "options" });
-  const { items: catalog } = useCatalogStorage(optionLibraryStorage);
+  const { fields, append, remove, move } = useFieldArray({ control, name: "services" });
+  const { items: catalog } = useCatalogStorage(serviceLibraryStorage);
   const activeCatalog = catalog.filter((item) => item.isActive);
   const [openRows, setOpenRows] = useState<Set<string>>(new Set());
   const [isPickerOpen, setPickerOpen] = useState(false);
@@ -134,22 +144,22 @@ export function OptionsSection() {
   }
 
   function handlePickerConfirm(selected: CatalogItem[]) {
-    selected.forEach((item) => append(catalogItemToOptionItem(item, true)));
+    selected.forEach((item) => append(catalogItemToServiceItem(item)));
   }
 
   return (
     <SectionCard
-      title="Options complémentaires"
-      description="Seules les options cochées « incluse » sont ajoutées au total du devis."
+      title="Offre sélectionnée"
+      description="Ajoutez des prestations depuis la bibliothèque YM Studio, puis personnalisez-les si besoin."
     >
       <div className="flex flex-col gap-3">
         {fields.length === 0 && (
           <p className="rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
-            Aucune option ajoutée pour le moment.
+            Aucune prestation ajoutée pour le moment.
           </p>
         )}
         {fields.map((field, index) => (
-          <OptionRow
+          <ServiceRow
             key={field.id}
             index={index}
             isOpen={openRows.has(field.id)}
@@ -165,16 +175,16 @@ export function OptionsSection() {
 
       <Button type="button" onClick={() => setPickerOpen(true)}>
         <Plus className="h-4 w-4" />
-        Ajouter des options
+        Ajouter des prestations
       </Button>
 
       <CatalogPickerModal
         open={isPickerOpen}
         onClose={() => setPickerOpen(false)}
-        title="Ajouter des options"
-        description="Sélectionnez un ou plusieurs modules complémentaires."
+        title="Ajouter des prestations"
+        description="Sélectionnez une ou plusieurs prestations à ajouter à l'offre."
         items={activeCatalog}
-        categories={OPTION_CATEGORIES}
+        categories={SERVICE_CATEGORIES}
         onConfirm={handlePickerConfirm}
         confirmLabelPrefix="Ajouter la sélection"
       />

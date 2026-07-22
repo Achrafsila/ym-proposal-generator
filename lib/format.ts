@@ -1,7 +1,10 @@
 export function formatCurrency(value: number): string {
   return new Intl.NumberFormat("fr-FR", {
     style: "currency",
-    currency: "EUR",
+    currency: "MAD",
+    currencyDisplay: "code",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
   }).format(Number.isFinite(value) ? value : 0);
 }
 
