@@ -21,7 +21,7 @@ export function ActionsSection({
   onReset,
 }: ActionsSectionProps) {
   return (
-    <SectionCard title="Actions">
+    <SectionCard title="Actions" step={7}>
       <div className="flex flex-wrap gap-3">
         <Button type="button" variant="outline" onClick={onPreview}>
           <Eye className="h-4 w-4" />
@@ -38,7 +38,7 @@ export function ActionsSection({
       </div>
       {overflowWarning && (
         <p
-          className="flex items-start gap-2 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800"
+          className="flex items-start gap-2 rounded-xl border border-amber-500/20 bg-amber-500/10 px-3 py-2 text-sm text-amber-300"
           role="alert"
         >
           <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
@@ -46,7 +46,7 @@ export function ActionsSection({
         </p>
       )}
       {error && (
-        <p className="text-sm text-red-600" role="alert">
+        <p className="text-sm text-red-400" role="alert">
           {error}
         </p>
       )}

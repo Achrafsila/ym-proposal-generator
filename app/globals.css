@@ -2,30 +2,51 @@
 @import "../components/proposal/proposal-document.css";
 
 :root {
-  --background: #faf9f7;
-  --foreground: #1a1a1a;
-  --card: #ffffff;
-  --muted: #f2f0ec;
-  --muted-foreground: #6b6558;
-  --border: #e6e3dc;
-  --accent: #c9a45c;
-  --accent-foreground: #1a1a1a;
+  --background: #0a0a0c;
+  --foreground: #f3efe6;
+  --card: rgba(255, 255, 255, 0.045);
+  --card-hover: rgba(255, 255, 255, 0.07);
+  --muted: rgba(255, 255, 255, 0.055);
+  --muted-foreground: #a39c8f;
+  --border: rgba(255, 255, 255, 0.09);
+  --border-strong: rgba(255, 255, 255, 0.16);
+  --accent: #d4af6a;
+  --accent-soft: #ecdcb3;
+  --accent-foreground: #18130a;
+  --accent-glow: rgba(212, 175, 106, 0.35);
+  --shadow-elevated:
+    0 24px 64px -24px rgba(0, 0, 0, 0.65), 0 6px 20px -6px rgba(0, 0, 0, 0.5);
+  --shadow-soft: 0 8px 30px -12px rgba(0, 0, 0, 0.5);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
+  --color-card-hover: var(--card-hover);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
   --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
   --color-accent-foreground: var(--accent-foreground);
   --font-sans: var(--font-geist-sans);
 }
 
 body {
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  background-color: var(--background);
+  background-image:
+    radial-gradient(ellipse 70% 55% at 15% -10%, rgba(212, 175, 106, 0.09), transparent 60%),
+    radial-gradient(ellipse 60% 50% at 100% 10%, rgba(212, 175, 106, 0.05), transparent 65%),
+    radial-gradient(ellipse 80% 60% at 50% 120%, rgba(255, 255, 255, 0.03), transparent 60%);
+  background-attachment: fixed;
+}
+
+::selection {
+  background-color: var(--accent-glow);
+  color: var(--accent-soft);
 }
 
 @media print {

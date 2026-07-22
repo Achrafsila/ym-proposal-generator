@@ -2,8 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { motion } from "framer-motion";
 import type { ReactNode } from "react";
 import { X } from "lucide-react";
+
+import { transitionPremium } from "@/lib/motion";
 
 interface ModalProps {
   open: boolean;
@@ -13,6 +16,11 @@ interface ModalProps {
   children: ReactNode;
   widthClassName?: string;
 }
+
+const panelVariants = {
+  hidden: { opacity: 0, scale: 0.96, y: 12 },
+  visible: { opacity: 1, scale: 1, y: 0 },
+};
 
 /**
  * Wraps the native <dialog> element: free focus trap, Escape-to-close, and
@@ -63,25 +71,31 @@ export function Modal({ open, onClose, title, description, children, widthClassN
     <dialog
       ref={dialogRef}
       onClick={handleBackdropClick}
-      className="m-auto max-h-[85vh] w-[calc(100vw-2rem)] rounded-2xl border border-border bg-white p-0 shadow-lg backdrop:bg-black/40 open:flex open:flex-col"
+      className="m-auto max-h-[85vh] w-[calc(100vw-2rem)] rounded-2xl border border-border-strong bg-transparent p-0 backdrop:bg-black/70 backdrop:backdrop-blur-sm open:flex open:flex-col"
     >
-      <div className={`flex max-h-[85vh] w-full flex-col ${widthClassName ?? "sm:w-[38rem]"}`}>
+      <motion.div
+        initial="hidden"
+        animate={open ? "visible" : "hidden"}
+        variants={panelVariants}
+        transition={transitionPremium}
+        className={`flex max-h-[85vh] w-full flex-col overflow-hidden rounded-2xl border border-border-strong bg-[#131115]/95 shadow-[var(--shadow-elevated)] backdrop-blur-2xl ${widthClassName ?? "sm:w-[38rem]"}`}
+      >
         <div className="flex items-start justify-between gap-4 border-b border-border px-6 py-4">
           <div className="flex flex-col gap-1">
-            <h2 className="text-base font-semibold text-foreground">{title}</h2>
+            <h2 className="text-base font-semibold tracking-tight text-foreground">{title}</h2>
             {description && <p className="text-sm text-muted-foreground">{description}</p>}
           </div>
           <button
             type="button"
             aria-label="Fermer"
             onClick={onClose}
-            className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+            className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors duration-200 hover:bg-white/[0.06] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
           >
             <X className="h-4 w-4" />
           </button>
         </div>
         <div className="flex-1 overflow-y-auto px-6 py-5">{children}</div>
-      </div>
+      </motion.div>
     </dialog>,
     document.body
   );

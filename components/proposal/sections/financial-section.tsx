@@ -2,6 +2,7 @@
 
 import { useFormContext } from "react-hook-form";
 
+import { AnimatedNumber } from "@/components/ui/animated-number";
 import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
 import { SectionCard } from "@/components/ui/section-card";
@@ -9,7 +10,6 @@ import { SegmentedToggle } from "@/components/ui/segmented-toggle";
 import { Select } from "@/components/ui/select";
 import { ToggleField } from "@/components/ui/toggle-field";
 import type { ProposalTotals } from "@/lib/calculations";
-import { formatCurrency } from "@/lib/format";
 import { numberFieldOptions } from "@/lib/form-helpers";
 import type { ProposalFormValues } from "@/lib/proposal-schema";
 
@@ -17,19 +17,36 @@ function SummaryRow({
   label,
   value,
   emphasis,
+  hero,
 }: {
   label: string;
   value: number;
   emphasis?: boolean;
+  hero?: boolean;
 }) {
   return (
     <div className="flex items-center justify-between gap-4">
-      <dt className={emphasis ? "font-semibold text-foreground" : "text-muted-foreground"}>
+      <dt
+        className={
+          hero
+            ? "text-sm font-medium text-foreground"
+            : emphasis
+              ? "font-semibold text-foreground"
+              : "text-muted-foreground"
+        }
+      >
         {label}
       </dt>
-      <dd className={emphasis ? "font-semibold text-foreground" : "text-foreground"}>
-        {formatCurrency(value)}
-      </dd>
+      <AnimatedNumber
+        value={value}
+        className={
+          hero
+            ? "text-lg font-semibold text-accent-soft"
+            : emphasis
+              ? "font-semibold text-foreground"
+              : "text-foreground"
+        }
+      />
     </div>
   );
 }
@@ -45,7 +62,7 @@ export function FinancialSection({ totals }: { totals: ProposalTotals }) {
   const showPriceDetails = watch("financial.showPriceDetails");
 
   return (
-    <SectionCard title="Récapitulatif financier">
+    <SectionCard title="Récapitulatif financier" step={5}>
       <div className="grid gap-4 sm:grid-cols-2">
         <FormField label="Type de remise" htmlFor="financial.discountType">
           <Select id="financial.discountType" {...register("financial.discountType")}>
@@ -117,16 +134,18 @@ export function FinancialSection({ totals }: { totals: ProposalTotals }) {
 
       <dl
         id="financial-summary"
-        className="flex flex-col gap-2 rounded-lg bg-muted/60 p-4 text-sm"
+        className="flex flex-col gap-2.5 rounded-xl border border-border bg-white/[0.02] p-4 text-sm"
       >
         <SummaryRow label="Offre principale" value={totals.servicesSubtotal} />
         <SummaryRow label="Options incluses" value={totals.optionsTotal} />
         <SummaryRow label="Remise" value={-totals.discountAmount} />
-        <div className="border-t border-border pt-2">
+        <div className="border-t border-border pt-2.5">
           <SummaryRow label="Total HT" value={totals.totalHT} emphasis />
         </div>
         <SummaryRow label="TVA" value={totals.tvaAmount} />
-        <SummaryRow label="Total TTC" value={totals.totalTTC} emphasis />
+        <div className="rounded-lg border border-accent/20 bg-accent/[0.06] px-3 py-2.5">
+          <SummaryRow label="Total TTC" value={totals.totalTTC} hero />
+        </div>
         <SummaryRow label="Acompte" value={totals.depositAmount} />
         <SummaryRow label="Solde" value={totals.balanceDue} emphasis />
       </dl>

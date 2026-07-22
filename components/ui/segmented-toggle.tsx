@@ -1,4 +1,9 @@
+"use client";
+
+import { motion } from "framer-motion";
+
 import { cn } from "@/lib/utils";
+import { transitionSnappy } from "@/lib/motion";
 
 interface SegmentedOption<T extends string> {
   value: T;
@@ -22,7 +27,7 @@ export function SegmentedToggle<T extends string>({
     <div
       role="radiogroup"
       aria-label={label}
-      className="inline-flex rounded-lg border border-border bg-white p-1"
+      className="inline-flex rounded-xl border border-border bg-card p-1 backdrop-blur-xl"
     >
       {options.map((option) => {
         const isActive = option.value === value;
@@ -34,12 +39,17 @@ export function SegmentedToggle<T extends string>({
             aria-checked={isActive}
             onClick={() => onChange(option.value)}
             className={cn(
-              "rounded-md px-3 py-1.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
-              isActive
-                ? "bg-accent text-accent-foreground"
-                : "text-muted-foreground hover:text-foreground"
+              "relative z-10 rounded-lg px-3.5 py-1.5 text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50",
+              isActive ? "text-accent-foreground" : "text-muted-foreground hover:text-foreground"
             )}
           >
+            {isActive && (
+              <motion.span
+                layoutId={`segmented-toggle-${label}`}
+                transition={transitionSnappy}
+                className="absolute inset-0 -z-10 rounded-lg bg-gradient-to-b from-accent-soft to-accent"
+              />
+            )}
             {option.label}
           </button>
         );

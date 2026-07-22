@@ -12,7 +12,7 @@ export function TermsSection() {
   const { register } = useFormContext<ProposalFormValues>();
 
   return (
-    <SectionCard title="Conditions commerciales">
+    <SectionCard title="Conditions commerciales" step={6}>
       <div className="grid gap-4 sm:grid-cols-2">
         <FormField label="Délai de réalisation" htmlFor="terms.completionTime">
           <Input

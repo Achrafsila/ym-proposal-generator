@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { FileDown } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
@@ -15,6 +16,7 @@ import { OptionsSection } from "@/components/proposal/sections/options-section";
 import { ProjectSection } from "@/components/proposal/sections/project-section";
 import { QuickStartSection } from "@/components/proposal/sections/quick-start-section";
 import { TermsSection } from "@/components/proposal/sections/terms-section";
+import { Button } from "@/components/ui/button";
 import { buildProposalValuesFromTemplate } from "@/features/proposal/apply-template";
 import {
   clearDraft,
@@ -205,17 +207,36 @@ function ProposalPage() {
         </div>
 
         <div ref={previewRef} className="flex flex-col gap-4 lg:sticky lg:top-8">
-          <div className="flex flex-col gap-1">
-            <h2 className="text-sm font-semibold text-foreground">Aperçu de la proposition</h2>
-            <p className="text-xs text-muted-foreground">
-              Ce rendu correspond fidèlement au PDF généré (4 pages A4 maximum).
-            </p>
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex flex-col gap-1">
+              <h2 className="text-sm font-semibold tracking-tight text-foreground">
+                Aperçu de la proposition
+              </h2>
+              <p className="text-xs text-muted-foreground">
+                Ce rendu correspond fidèlement au PDF généré (4 pages A4 maximum).
+              </p>
+            </div>
+            <span className="hidden shrink-0 items-center gap-1.5 rounded-full border border-accent/25 bg-accent/10 px-3 py-1 text-[11px] font-medium text-accent-soft sm:inline-flex">
+              Aperçu en direct
+            </span>
           </div>
-          <div ref={previewMeasureRef} className="rounded-2xl border border-border bg-muted/40 p-4">
+          <div
+            ref={previewMeasureRef}
+            className="rounded-2xl border border-border bg-card p-4 shadow-[var(--shadow-elevated)] backdrop-blur-xl sm:p-6"
+          >
             <ProposalPreviewFrame>
               <ProposalDocument data={documentData} />
             </ProposalPreviewFrame>
           </div>
+
+          <Button
+            type="submit"
+            disabled={isGenerating}
+            className="fixed bottom-6 right-6 z-40 hidden shadow-[0_16px_40px_-12px_rgba(212,175,106,0.6)] lg:inline-flex"
+          >
+            <FileDown className="h-4 w-4" />
+            {isGenerating ? "Génération…" : "Générer le PDF"}
+          </Button>
         </div>
       </form>
     </FormProvider>

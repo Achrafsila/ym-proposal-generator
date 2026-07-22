@@ -25,9 +25,11 @@ export default function RootLayout({
     <html lang="fr" className={`${geistSans.variable} h-full`}>
       <body className="flex h-full min-h-full flex-col bg-background font-sans text-foreground antialiased">
         <AppNav />
-        <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 lg:px-10">
-          {children}
-        </main>
+        <div className="flex min-h-full flex-1 flex-col md:pl-64">
+          <main className="mx-auto w-full max-w-7xl flex-1 px-4 pb-24 pt-8 sm:px-6 md:pb-10 lg:px-10">
+            {children}
+          </main>
+        </div>
       </body>
     </html>
   );

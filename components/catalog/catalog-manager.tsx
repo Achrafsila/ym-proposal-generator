@@ -1,6 +1,7 @@
 "use client";
 
 import { Copy, Pencil, Plus, Power, Search, Trash2 } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
 import { useMemo, useState } from "react";
 
 import { CatalogItemFormModal } from "@/components/catalog/catalog-item-form-modal";
@@ -14,6 +15,7 @@ import type { CatalogItem } from "@/features/catalog/types";
 import { UNIT_LABELS } from "@/features/catalog/types";
 import { useCatalogStorage } from "@/features/catalog/use-catalog-storage";
 import { formatCurrency } from "@/lib/format";
+import { fadeInUp, staggerContainer, transitionSnappy } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
 interface CatalogManagerProps {
@@ -68,9 +70,11 @@ export function CatalogManager({
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-1">
-        <h1 className="text-xl font-semibold text-foreground">{title}</h1>
+    <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-2">
+        <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+          {title}
+        </h1>
         <p className="text-sm text-muted-foreground">{description}</p>
       </div>
 
@@ -106,56 +110,70 @@ export function CatalogManager({
         </Button>
       </div>
 
-      <div className="flex flex-col gap-3">
+      <motion.div
+        variants={staggerContainer}
+        initial="hidden"
+        animate="visible"
+        className="flex flex-col gap-3"
+      >
         {filteredItems.length === 0 && (
-          <p className="rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
+          <p className="rounded-xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
             Aucun résultat.
           </p>
         )}
-        {filteredItems.map((item) => (
-          <div
-            key={item.id}
-            className={cn(
-              "flex items-center justify-between gap-4 rounded-lg border border-border bg-white p-4",
-              !item.isActive && "opacity-60"
-            )}
-          >
-            <div className="flex min-w-0 flex-col gap-1">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="font-medium text-foreground">{item.name}</span>
-                {!item.isActive && (
-                  <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
-                    Inactif
-                  </span>
+        <AnimatePresence initial={false}>
+          {filteredItems.map((item) => (
+            <motion.div
+              key={item.id}
+              layout
+              variants={fadeInUp}
+              initial="hidden"
+              animate="visible"
+              exit={{ opacity: 0, scale: 0.98, transition: transitionSnappy }}
+              whileHover={{ y: -2 }}
+              transition={transitionSnappy}
+              className={cn(
+                "flex items-center justify-between gap-4 rounded-xl border border-border bg-card p-4 shadow-[var(--shadow-soft)] backdrop-blur-xl transition-colors duration-200 hover:border-border-strong hover:bg-card-hover",
+                !item.isActive && "opacity-50"
+              )}
+            >
+              <div className="flex min-w-0 flex-col gap-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="font-medium text-foreground">{item.name}</span>
+                  {!item.isActive && (
+                    <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
+                      Inactif
+                    </span>
+                  )}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {item.category} · {UNIT_LABELS[item.unit]} · {formatCurrency(item.recommendedPrice)}
+                </p>
+                {item.shortDescription && (
+                  <p className="text-sm text-muted-foreground">{item.shortDescription}</p>
                 )}
               </div>
-              <p className="text-xs text-muted-foreground">
-                {item.category} · {UNIT_LABELS[item.unit]} · {formatCurrency(item.recommendedPrice)}
-              </p>
-              {item.shortDescription && (
-                <p className="text-sm text-muted-foreground">{item.shortDescription}</p>
-              )}
-            </div>
-            <div className="flex shrink-0 items-center gap-1">
-              <IconButton
-                label={item.isActive ? "Désactiver" : "Activer"}
-                onClick={() => setActive(item.id, !item.isActive)}
-              >
-                <Power className="h-4 w-4" />
-              </IconButton>
-              <IconButton label="Dupliquer" onClick={() => duplicate(item.id)}>
-                <Copy className="h-4 w-4" />
-              </IconButton>
-              <IconButton label="Modifier" onClick={() => setModalState({ open: true, item })}>
-                <Pencil className="h-4 w-4" />
-              </IconButton>
-              <IconButton label="Supprimer" variant="danger" onClick={() => handleRemove(item)}>
-                <Trash2 className="h-4 w-4" />
-              </IconButton>
-            </div>
-          </div>
-        ))}
-      </div>
+              <div className="flex shrink-0 items-center gap-1">
+                <IconButton
+                  label={item.isActive ? "Désactiver" : "Activer"}
+                  onClick={() => setActive(item.id, !item.isActive)}
+                >
+                  <Power className="h-4 w-4" />
+                </IconButton>
+                <IconButton label="Dupliquer" onClick={() => duplicate(item.id)}>
+                  <Copy className="h-4 w-4" />
+                </IconButton>
+                <IconButton label="Modifier" onClick={() => setModalState({ open: true, item })}>
+                  <Pencil className="h-4 w-4" />
+                </IconButton>
+                <IconButton label="Supprimer" variant="danger" onClick={() => handleRemove(item)}>
+                  <Trash2 className="h-4 w-4" />
+                </IconButton>
+              </div>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </motion.div>
 
       <CatalogItemFormModal
         open={modalState.open}

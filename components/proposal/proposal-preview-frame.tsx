@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 import type { ReactNode } from "react";
+
+import { transitionPremium } from "@/lib/motion";
 
 const PAGE_WIDTH_PX = 793.7; // 210mm at 96dpi
 
@@ -40,16 +43,17 @@ export function ProposalPreviewFrame({ children }: { children: ReactNode }) {
   return (
     <div ref={containerRef} className="w-full min-w-0 overflow-hidden">
       <div style={{ height: contentHeight * scale || undefined }}>
-        <div
+        <motion.div
           ref={contentRef}
+          animate={{ scale }}
+          transition={transitionPremium}
           style={{
             width: PAGE_WIDTH_PX,
-            transform: `scale(${scale})`,
             transformOrigin: "top left",
           }}
         >
           {children}
-        </div>
+        </motion.div>
       </div>
     </div>
   );

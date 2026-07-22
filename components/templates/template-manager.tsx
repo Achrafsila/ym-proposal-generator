@@ -1,6 +1,7 @@
 "use client";
 
 import { Copy, FileText, Pencil, Play, Trash2 } from "lucide-react";
+import { motion } from "framer-motion";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -13,6 +14,7 @@ import { useCatalogStorage } from "@/features/catalog/use-catalog-storage";
 import type { TemplateFormValues } from "@/features/templates/template-form-schema";
 import type { ProposalTemplate } from "@/features/templates/types";
 import { useTemplateStorage } from "@/features/templates/use-template-storage";
+import { fadeInUp, staggerContainer, transitionSnappy } from "@/lib/motion";
 
 export function TemplateManager() {
   const { templates, add, update, duplicate, remove } = useTemplateStorage();
@@ -44,10 +46,12 @@ export function TemplateManager() {
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-col gap-1">
-          <h1 className="text-xl font-semibold text-foreground">Modèles</h1>
+        <div className="flex flex-col gap-2">
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+            Modèles
+          </h1>
           <p className="text-sm text-muted-foreground">
             Préremplissez une nouvelle proposition à partir d&apos;un modèle par secteur.
           </p>
@@ -58,25 +62,43 @@ export function TemplateManager() {
         </Button>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <motion.div
+        variants={staggerContainer}
+        initial="hidden"
+        animate="visible"
+        className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
+      >
         {templates.map((template) => (
-          <div
+          <motion.div
             key={template.id}
-            className="flex flex-col gap-3 rounded-2xl border border-border bg-white p-5 shadow-sm"
+            variants={fadeInUp}
+            whileHover={{ y: -4 }}
+            transition={transitionSnappy}
+            className="group relative flex flex-col gap-4 overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-soft)] backdrop-blur-xl transition-colors duration-300 hover:border-accent/40"
           >
-            <div className="flex flex-col gap-1">
-              <span className="text-xs font-medium uppercase tracking-wide text-accent">
+            <div
+              aria-hidden
+              className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-accent/10 opacity-0 blur-3xl transition-opacity duration-500 group-hover:opacity-100"
+            />
+
+            <div className="relative flex flex-col gap-2">
+              <span className="inline-flex w-fit items-center rounded-full border border-accent/25 bg-accent/10 px-2.5 py-0.5 text-[11px] font-medium uppercase tracking-wide text-accent-soft">
                 {template.sector}
               </span>
-              <h2 className="text-base font-semibold text-foreground">{template.name}</h2>
+              <h2 className="text-lg font-semibold tracking-tight text-foreground">
+                {template.name}
+              </h2>
             </div>
-            <p className="line-clamp-3 text-sm text-muted-foreground">
+
+            <p className="relative line-clamp-3 text-sm text-muted-foreground">
               {template.projectContext || "Aucune présentation par défaut."}
             </p>
-            <p className="text-xs text-muted-foreground">
+
+            <p className="relative text-xs text-muted-foreground">
               {template.serviceIds.length} prestation(s) · {template.optionIds.length} option(s)
             </p>
-            <div className="mt-auto flex items-center justify-between gap-2 pt-2">
+
+            <div className="relative mt-auto flex items-center justify-between gap-2 border-t border-border pt-4">
               <Link href={`/?useTemplate=${template.id}`}>
                 <Button type="button" variant="primary" className="text-sm">
                   <Play className="h-4 w-4" />
@@ -84,10 +106,7 @@ export function TemplateManager() {
                 </Button>
               </Link>
               <div className="flex items-center gap-1">
-                <IconButton
-                  label="Dupliquer"
-                  onClick={() => duplicate(template.id)}
-                >
+                <IconButton label="Dupliquer" onClick={() => duplicate(template.id)}>
                   <Copy className="h-4 w-4" />
                 </IconButton>
                 <IconButton
@@ -101,9 +120,9 @@ export function TemplateManager() {
                 </IconButton>
               </div>
             </div>
-          </div>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
 
       <TemplateFormModal
         open={modalState.open}

@@ -14,7 +14,7 @@ export function ClientSection() {
   } = useFormContext<ProposalFormValues>();
 
   return (
-    <SectionCard title="Informations du client">
+    <SectionCard title="Informations du client" step={1}>
       <div className="grid gap-4 sm:grid-cols-2">
         <FormField
           label="Nom du client"

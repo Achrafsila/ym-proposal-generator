@@ -1,9 +1,11 @@
 "use client";
 
 import { ArrowDown, ArrowUp, ChevronUp, Pencil, Trash2 } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
 import type { ReactNode } from "react";
 
 import { IconButton } from "@/components/ui/icon-button";
+import { transitionSnappy } from "@/lib/motion";
 
 interface CollapsibleRowProps {
   summary: ReactNode;
@@ -37,7 +39,7 @@ export function CollapsibleRow({
   children,
 }: CollapsibleRowProps) {
   return (
-    <div className="rounded-lg border border-border">
+    <div className="overflow-hidden rounded-xl border border-border bg-white/[0.02] transition-colors duration-200 hover:border-border-strong">
       <div className="flex items-center gap-3 px-4 py-3">
         <div className="min-w-0 flex-1">{summary}</div>
         <div className="flex shrink-0 items-center gap-1">
@@ -65,7 +67,20 @@ export function CollapsibleRow({
           </IconButton>
         </div>
       </div>
-      {isOpen && <div className="border-t border-border px-4 py-4">{children}</div>}
+      <AnimatePresence initial={false}>
+        {isOpen && (
+          <motion.div
+            key="content"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={transitionSnappy}
+            className="overflow-hidden"
+          >
+            <div className="border-t border-border px-4 py-4">{children}</div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

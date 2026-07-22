@@ -150,6 +150,7 @@ export function OfferSection() {
   return (
     <SectionCard
       title="Offre sélectionnée"
+      step={3}
       description="Ajoutez des prestations depuis la bibliothèque YM Studio, puis personnalisez-les si besoin."
     >
       <div className="flex flex-col gap-3">

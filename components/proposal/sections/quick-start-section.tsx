@@ -40,7 +40,7 @@ export function QuickStartSection({
   }
 
   return (
-    <div className="flex flex-col gap-3 rounded-2xl border border-border bg-white p-4 shadow-sm">
+    <div className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-4 shadow-[var(--shadow-soft)] backdrop-blur-xl">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <FormField
           label="Démarrer à partir d'un modèle"

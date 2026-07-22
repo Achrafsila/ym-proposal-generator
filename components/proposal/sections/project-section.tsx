@@ -15,7 +15,7 @@ export function ProjectSection() {
   } = useFormContext<ProposalFormValues>();
 
   return (
-    <SectionCard title="Présentation de la mission">
+    <SectionCard title="Présentation de la mission" step={2}>
       <FormField
         label="Intitulé de la proposition"
         htmlFor="project.title"

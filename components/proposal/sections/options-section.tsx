@@ -140,6 +140,7 @@ export function OptionsSection() {
   return (
     <SectionCard
       title="Options complémentaires"
+      step={4}
       description="Seules les options cochées « incluse » sont ajoutées au total du devis."
     >
       <div className="flex flex-col gap-3">
