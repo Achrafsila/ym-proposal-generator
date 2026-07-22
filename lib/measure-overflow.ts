@@ -1,5 +1,9 @@
-/** A4 height in CSS pixels at 96dpi (297mm), matching proposal-document.css. */
-export const A4_PAGE_HEIGHT_PX = 297 * (96 / 25.4);
+/**
+ * A4 content-area height in CSS pixels at 96dpi: 297mm page minus the
+ * 2×15mm vertical @page margin now applied in proposal-document.css
+ * (previously 297mm, when margins were plain element padding instead).
+ */
+export const A4_PAGE_HEIGHT_PX = 267 * (96 / 25.4);
 
 /**
  * Counts how many `.proposal-page` elements under `root` are taller than a

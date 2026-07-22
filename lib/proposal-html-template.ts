@@ -130,13 +130,14 @@ function offerPageHtml(data: ProposalDocumentData): string {
         </tr>`
           )
           .join("")}
-      </tbody>
-      <tfoot>
-        <tr>
+        <!-- Kept in tbody, not tfoot: a <tfoot> repeats at the bottom of
+             every page a table spans, which would show this grand total
+             prematurely before the last rows. -->
+        <tr class="proposal-table-total-row">
           <td colspan="3">Total de l'offre principale</td>
           <td class="num">${esc(formatCurrency(totals.servicesSubtotal))}</td>
         </tr>
-      </tfoot>
+      </tbody>
     </table>`
     : `
     <div class="proposal-global-amount">
@@ -185,13 +186,11 @@ function optionsAndTermsPageHtml(data: ProposalDocumentData): string {
         </tr>`
           )
           .join("")}
-      </tbody>
-      <tfoot>
-        <tr>
+        <tr class="proposal-table-total-row">
           <td>Total options incluses</td>
           <td class="num">${esc(formatCurrency(totals.optionsTotal))}</td>
         </tr>
-      </tfoot>
+      </tbody>
     </table>`
       : `<p class="proposal-muted">Aucune option incluse dans cette proposition.</p>`;
 

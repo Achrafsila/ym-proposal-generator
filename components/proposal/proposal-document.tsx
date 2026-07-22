@@ -120,13 +120,14 @@ function OfferPage({ data }: { data: ProposalDocumentData }) {
                 <td className="num">{formatCurrency(service.quantity * service.unitPrice)}</td>
               </tr>
             ))}
-          </tbody>
-          <tfoot>
-            <tr>
+            {/* Kept in tbody (not tfoot): a <tfoot> repeats at the bottom of
+                every page a table spans, which would show this grand total
+                prematurely before the last rows. */}
+            <tr className="proposal-table-total-row">
               <td colSpan={3}>Total de l&apos;offre principale</td>
               <td className="num">{formatCurrency(data.totals.servicesSubtotal)}</td>
             </tr>
-          </tfoot>
+          </tbody>
         </table>
       ) : (
         <div className="proposal-global-amount">
@@ -176,13 +177,11 @@ function OptionsAndTermsPage({ data }: { data: ProposalDocumentData }) {
                 <td className="num">{formatCurrency(option.price)}</td>
               </tr>
             ))}
-          </tbody>
-          <tfoot>
-            <tr>
+            <tr className="proposal-table-total-row">
               <td>Total options incluses</td>
               <td className="num">{formatCurrency(data.totals.optionsTotal)}</td>
             </tr>
-          </tfoot>
+          </tbody>
         </table>
       ) : (
         <p className="proposal-muted">Aucune option incluse dans cette proposition.</p>

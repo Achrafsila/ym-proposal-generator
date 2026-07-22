@@ -1,6 +1,12 @@
 @page {
   size: A4;
-  margin: 0;
+  /* Vertical margin lives here (not as element padding) so that content
+     which naturally continues onto another physical page — a long table,
+     a long section — still gets a proper top/bottom margin on that
+     continuation page. Horizontal margin stays as .proposal-page padding
+     below (kept at the page's own 210mm width, not @page, so the on-screen
+     preview's width math in proposal-preview-frame.tsx needs no change). */
+  margin: 15mm 0;
 }
 
 .proposal-document {
@@ -10,9 +16,8 @@
 
 .proposal-page {
   width: 210mm;
-  min-height: 297mm;
   box-sizing: border-box;
-  padding: 15mm 15mm;
+  padding: 0 15mm;
   background: #ffffff;
   color: #1a1a1a;
   font-family:
@@ -29,13 +34,18 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  page-break-after: always;
-  break-after: page;
 }
 
-.proposal-page:last-child {
-  page-break-after: auto;
-  break-after: auto;
+/* Only the cover is a dedicated, fixed-height page — it always starts a
+   fresh document and its layout (justify-content: space-between) is
+   designed to fill one full page. Every other section flows continuously:
+   short sections no longer force a wasted blank page, and long ones only
+   spill onto a further page when their actual content requires it. */
+.proposal-cover {
+  min-height: 267mm; /* 297mm page minus the 2×15mm @page vertical margin */
+  justify-content: space-between;
+  break-after: page;
+  page-break-after: always;
 }
 
 @media screen {
@@ -90,13 +100,17 @@
   font-weight: 700;
   color: #1a1a1a;
   margin: 0 0 12px;
+  break-after: avoid-page;
+  page-break-after: avoid;
 }
 
 .proposal-subheading {
   font-size: 11pt;
   font-weight: 700;
   color: #1a1a1a;
-  margin: 12px 0 6px;
+  margin: 10px 0 6px;
+  break-after: avoid-page;
+  page-break-after: avoid;
 }
 
 .proposal-muted {
@@ -109,19 +123,17 @@
 
 .proposal-prewrap {
   white-space: pre-line;
+  orphans: 3;
+  widows: 3;
 }
 
 .proposal-rule {
   border: none;
   border-top: 1px solid #e6e3dc;
-  margin: 16px 0;
+  margin: 14px 0;
 }
 
 /* Cover page */
-
-.proposal-cover {
-  justify-content: space-between;
-}
 
 .proposal-cover-title {
   margin-top: 60px;
@@ -146,6 +158,8 @@
   font-size: 10pt;
   border-top: 1px solid #e6e3dc;
   padding-top: 20px;
+  break-inside: avoid;
+  page-break-inside: avoid;
 }
 
 .proposal-cover-meta-label {
@@ -173,6 +187,8 @@
   background: #f7f6f2;
   padding: 16px;
   margin-top: 8px;
+  break-inside: avoid;
+  page-break-inside: avoid;
 }
 
 .proposal-info-grid {
@@ -186,6 +202,8 @@
   border: 1px solid #e6e3dc;
   border-radius: 10px;
   padding: 12px 14px;
+  break-inside: avoid;
+  page-break-inside: avoid;
 }
 
 /* Tables */
@@ -195,6 +213,10 @@
   border-collapse: collapse;
   font-size: 9.5pt;
   margin-top: 4px;
+}
+
+.proposal-table thead {
+  display: table-header-group; /* repeats column headers if a table spans pages */
 }
 
 .proposal-table th {
@@ -219,10 +241,27 @@
   white-space: nowrap;
 }
 
-.proposal-table tfoot td {
+.proposal-table-total-row td {
   border-bottom: none;
   border-top: 1px solid #e6e3dc;
   font-weight: 700;
+}
+
+/* The total row must stay attached to the last data row above it — never
+   let a page break separate a table's own grand total from its rows. */
+.proposal-table-total-row {
+  break-inside: avoid;
+  page-break-inside: avoid;
+  break-before: avoid-page;
+  page-break-before: avoid;
+}
+
+/* Each row is the atomic "prestation card" — never split a row across a
+   page break, even though the table as a whole may span multiple pages
+   when it's genuinely too long to fit on one. */
+.proposal-table tbody tr {
+  break-inside: avoid;
+  page-break-inside: avoid;
 }
 
 .proposal-global-amount {
@@ -233,6 +272,8 @@
   align-items: center;
   justify-content: space-between;
   margin-top: 8px;
+  break-inside: avoid;
+  page-break-inside: avoid;
 }
 
 .proposal-global-amount .value {
@@ -248,6 +289,8 @@
   border-radius: 10px;
   padding: 16px;
   margin-top: 8px;
+  break-inside: avoid;
+  page-break-inside: avoid;
 }
 
 .proposal-recap-row {
@@ -271,6 +314,8 @@
   gap: 10px 24px;
   margin-top: 8px;
   font-size: 10pt;
+  break-inside: avoid;
+  page-break-inside: avoid;
 }
 
 .proposal-terms-grid dt {
@@ -290,6 +335,8 @@
   gap: 16px;
   margin-top: auto;
   padding-top: 24px;
+  break-inside: avoid;
+  page-break-inside: avoid;
 }
 
 .proposal-signature-box {
@@ -301,6 +348,8 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  break-inside: avoid;
+  page-break-inside: avoid;
 }
 
 .proposal-signature-label {
