@@ -10,9 +10,13 @@ export const A4_PAGE_HEIGHT_PX = 267 * (96 / 25.4);
  * single A4 page — i.e. how many pages the generated PDF would actually
  * spill onto beyond the element's own page-break. Used to warn before
  * generation without ever truncating content silently.
+ *
+ * `.proposal-cover` is excluded: it's a dedicated full-bleed page (297mm,
+ * no @page margin) rather than the 267mm content box every other page is
+ * measured against, so it would otherwise always read as "overflowing".
  */
 export function countOverflowingPages(root: HTMLElement): number {
-  const pages = root.querySelectorAll<HTMLElement>(".proposal-page");
+  const pages = root.querySelectorAll<HTMLElement>(".proposal-page:not(.proposal-cover)");
   let overflowing = 0;
   pages.forEach((page) => {
     if (page.scrollHeight > A4_PAGE_HEIGHT_PX + 1) {

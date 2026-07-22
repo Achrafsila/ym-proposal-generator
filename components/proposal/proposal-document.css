@@ -9,6 +9,13 @@
   margin: 15mm 0;
 }
 
+/* The cover is the only full-bleed, edge-to-edge page (dark background
+   art extends all the way to the physical page edge) — every other page
+   keeps the standard vertical margin above. */
+@page :first {
+  margin: 0;
+}
+
 .proposal-document {
   display: flex;
   flex-direction: column;
@@ -16,6 +23,16 @@
 
 .proposal-page {
   width: 210mm;
+  /* Floor, not a cap: content taller than one page still grows past this
+     and simply continues fragmenting onto the next physical page as
+     before. This only matters for a page shorter than one A4 — with the
+     fixed narrative structure below (each chapter forced onto its own
+     page), it stretches a short chapter to fill exactly one full page,
+     which is also what gives `margin-top: auto` (used by the running
+     footer and the signatures block) an actual page's worth of free
+     space to push against — without it, a flex column with auto height
+     has nothing for an auto margin to distribute. */
+  min-height: 267mm;
   box-sizing: border-box;
   padding: 0 15mm;
   background: #ffffff;
@@ -36,16 +53,72 @@
   flex-direction: column;
 }
 
-/* Only the cover is a dedicated, fixed-height page — it always starts a
-   fresh document and its layout (justify-content: space-between) is
-   designed to fill one full page. Every other section flows continuously:
-   short sections no longer force a wasted blank page, and long ones only
-   spill onto a further page when their actual content requires it. */
+/* The cover is a dedicated, full-bleed page — it always starts a fresh
+   document and always occupies exactly one physical page. Every other
+   section flows continuously: short sections no longer force a wasted
+   blank page, and long ones only spill onto a further page when their
+   actual content requires it. */
 .proposal-cover {
-  min-height: 267mm; /* 297mm page minus the 2×15mm @page vertical margin */
-  justify-content: space-between;
+  width: 210mm;
+  min-height: 297mm; /* full physical page — @page :first removes the margin */
+  padding: 24mm 18mm;
+  box-sizing: border-box;
+  background: #0a0a0c;
   break-after: page;
   page-break-after: always;
+}
+
+.proposal-cover-art {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.proposal-cover-content {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: #f2ede1;
+}
+
+.proposal-cover-content .proposal-wordmark {
+  color: #f5f1e6;
+}
+
+.proposal-cover-content .proposal-muted {
+  color: #c7bfae;
+}
+
+.proposal-cover-content .proposal-eyebrow {
+  color: #d9b877;
+}
+
+.proposal-cover-content .proposal-cover-meta {
+  border-top-color: rgba(201, 164, 92, 0.25);
+}
+
+.proposal-cover-content .proposal-cover-meta-label {
+  color: #b9ab86;
+}
+
+.proposal-cover-content .proposal-cover-meta-value {
+  color: #faf7f0;
+}
+
+.proposal-cover-content .proposal-cover-footer {
+  color: #a89b7d;
+}
+
+/* Forces the Offre and Options/Conditions chapters to always begin on a
+   fresh page, even when the previous chapter was short — the fixed
+   narrative structure (Couverture / Mission / Offre / Options) takes
+   priority over minimizing page count for this document. */
+.proposal-force-break {
+  break-before: page;
+  page-break-before: always;
 }
 
 @media screen {
@@ -96,10 +169,11 @@
 }
 
 .proposal-heading {
-  font-size: 16pt;
+  font-size: 19pt;
   font-weight: 700;
+  letter-spacing: -0.01em;
   color: #1a1a1a;
-  margin: 0 0 12px;
+  margin: 4px 0 16px;
   break-after: avoid-page;
   page-break-after: avoid;
 }
@@ -108,7 +182,9 @@
   font-size: 11pt;
   font-weight: 700;
   color: #1a1a1a;
-  margin: 10px 0 6px;
+  margin: 14px 0 8px;
+  padding-left: 10px;
+  border-left: 2px solid #c9a45c;
   break-after: avoid-page;
   page-break-after: avoid;
 }
@@ -136,19 +212,36 @@
 /* Cover page */
 
 .proposal-cover-title {
-  margin-top: 60px;
+  margin-top: 70px;
 }
 
 .proposal-cover-title .proposal-eyebrow {
-  margin-bottom: 14px;
+  margin-bottom: 16px;
 }
 
 .proposal-cover-project {
-  font-size: 26pt;
+  font-size: 30pt;
   font-weight: 700;
-  line-height: 1.2;
-  margin: 0 0 24px;
-  max-width: 130mm;
+  line-height: 1.18;
+  letter-spacing: -0.01em;
+  margin: 0 0 28px;
+  max-width: 140mm;
+  color: #faf7f0;
+}
+
+.proposal-cover-for-label {
+  margin: 0 0 6px;
+}
+
+.proposal-cover-for-company {
+  font-size: 15pt;
+  font-weight: 700;
+  color: #faf7f0;
+  margin: 0 0 4px;
+}
+
+.proposal-cover-for-name {
+  margin: 0;
 }
 
 .proposal-cover-meta {
@@ -223,28 +316,39 @@
   text-align: left;
   font-size: 8pt;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
   color: #8a8272;
-  border-bottom: 1px solid #e6e3dc;
-  padding: 4px 8px;
+  border-bottom: 1px solid rgba(201, 164, 92, 0.4);
+  padding: 6px 8px 10px;
+}
+
+.proposal-table th.num {
+  font-variant-numeric: tabular-nums;
 }
 
 .proposal-table td {
-  padding: 4px 8px;
+  padding: 7px 8px;
   border-bottom: 1px solid #f0eee8;
   vertical-align: top;
-  line-height: 1.3;
+  line-height: 1.35;
 }
 
 .proposal-table td.num {
   text-align: right;
   white-space: nowrap;
+  font-variant-numeric: tabular-nums;
 }
 
 .proposal-table-total-row td {
   border-bottom: none;
-  border-top: 1px solid #e6e3dc;
+  border-top: 1px solid rgba(201, 164, 92, 0.6);
+  padding-top: 9px;
   font-weight: 700;
+}
+
+.proposal-table-total-row td.num {
+  color: #a9793a;
+  font-size: 10.5pt;
 }
 
 /* The total row must stay attached to the last data row above it — never
@@ -364,8 +468,30 @@
   color: #8a8272;
 }
 
-.proposal-footer-note {
+/* Discreet running branding footer, repeated identically on every content
+   page (not just the last) — a thin gold hairline plus the studio name and
+   reference, always at the same visual weight across the document. */
+.proposal-page-footer {
   margin-top: 16px;
+}
+
+/* On pages with no other bottom-pinned element (Mission, Offre), the
+   footer itself claims the remaining flex space so it always sits at the
+   physical bottom of the page rather than right after the last block of
+   content. On the closing page the signatures already do this job, so the
+   footer there just follows them with the normal margin above. */
+.proposal-page-footer--pinned {
+  margin-top: auto;
+}
+
+.proposal-footer-rule {
+  border-top: 1px solid rgba(201, 164, 92, 0.35);
+  margin: 0 0 8px;
+}
+
+.proposal-page-footer-row {
+  display: flex;
+  justify-content: space-between;
   font-size: 8.5pt;
   color: #8a8272;
 }

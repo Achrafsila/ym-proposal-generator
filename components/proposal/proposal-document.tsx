@@ -4,49 +4,138 @@ import { formatCurrency, formatDateFR } from "@/lib/format";
 const APPROACH_COPY =
   "Chez YM Studio, nous concevons des expériences digitales sur mesure, en alliant un design premium, une exécution technique soignée et un accompagnement personnalisé à chaque étape du projet. Notre objectif est de livrer un résultat à la hauteur de votre image de marque, dans les délais convenus.";
 
+const COVER_FONT_STACK =
+  'ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
+
+function CoverArt() {
+  return (
+    <svg
+      className="proposal-cover-art"
+      viewBox="0 0 210 297"
+      preserveAspectRatio="none"
+      aria-hidden="true"
+    >
+      <defs>
+        <radialGradient id="coverGlowGold" cx="82%" cy="18%" r="55%">
+          <stop offset="0%" stopColor="#c9a45c" stopOpacity="0.22" />
+          <stop offset="45%" stopColor="#c9a45c" stopOpacity="0.08" />
+          <stop offset="100%" stopColor="#c9a45c" stopOpacity="0" />
+        </radialGradient>
+        <radialGradient id="coverGlowAmber" cx="12%" cy="88%" r="50%">
+          <stop offset="0%" stopColor="#7c5a2a" stopOpacity="0.18" />
+          <stop offset="100%" stopColor="#7c5a2a" stopOpacity="0" />
+        </radialGradient>
+      </defs>
+
+      <rect x="0" y="0" width="210" height="297" fill="#0a0a0c" />
+      <rect x="0" y="0" width="210" height="297" fill="url(#coverGlowGold)" />
+      <rect x="0" y="0" width="210" height="297" fill="url(#coverGlowAmber)" />
+
+      {/* Single elegant diagonal crossing the page */}
+      <line
+        x1="-20"
+        y1="95"
+        x2="230"
+        y2="30"
+        stroke="#c9a45c"
+        strokeOpacity="0.14"
+        strokeWidth="0.6"
+      />
+
+      {/* Technical / blueprint hairlines */}
+      <line x1="18" y1="0" x2="18" y2="297" stroke="#c9a45c" strokeOpacity="0.08" strokeWidth="0.15" />
+      <line x1="192" y1="0" x2="192" y2="297" stroke="#c9a45c" strokeOpacity="0.08" strokeWidth="0.15" />
+      <line
+        x1="0"
+        y1="24"
+        x2="210"
+        y2="24"
+        stroke="#c9a45c"
+        strokeOpacity="0.08"
+        strokeWidth="0.15"
+        strokeDasharray="1 2"
+      />
+      <line
+        x1="0"
+        y1="273"
+        x2="210"
+        y2="273"
+        stroke="#c9a45c"
+        strokeOpacity="0.08"
+        strokeWidth="0.15"
+        strokeDasharray="1 2"
+      />
+
+      {/* Corner registration marks */}
+      <g stroke="#c9a45c" strokeOpacity="0.22" strokeWidth="0.25" fill="none">
+        <path d="M12,20 L12,12 L20,12" />
+        <path d="M190,12 L198,12 L198,20" />
+        <path d="M198,277 L198,285 L190,285" />
+        <path d="M20,285 L12,285 L12,277" />
+      </g>
+
+      {/* Giant background monogram — low opacity, never over the text block */}
+      <text
+        x="150"
+        y="215"
+        textAnchor="middle"
+        fontFamily={COVER_FONT_STACK}
+        fontWeight="700"
+        fontSize="150"
+        fill="#f5efe3"
+        fillOpacity="0.05"
+      >
+        YM
+      </text>
+    </svg>
+  );
+}
+
 function CoverPage({ data }: { data: ProposalDocumentData }) {
   return (
     <section className="proposal-page proposal-cover">
-      <div className="proposal-header">
-        <span className="proposal-monogram">YM</span>
-        <span className="proposal-wordmark">YM Studio</span>
-      </div>
+      <CoverArt />
+      <div className="proposal-cover-content">
+        <div className="proposal-header">
+          <span className="proposal-monogram">YM</span>
+          <span className="proposal-wordmark">YM Studio</span>
+        </div>
 
-      <div className="proposal-cover-title">
-        <p className="proposal-eyebrow">Proposition commerciale</p>
-        <h1 className="proposal-cover-project">{data.project.title || "Projet à définir"}</h1>
-        <p className="proposal-muted">
-          Préparée pour {data.client.name || "—"}
-          {data.client.company ? ` · ${data.client.company}` : ""}
-        </p>
-      </div>
+        <div className="proposal-cover-title">
+          <p className="proposal-eyebrow">Proposition commerciale</p>
+          <h1 className="proposal-cover-project">{data.project.title || "Projet à définir"}</h1>
+          <p className="proposal-cover-for-label proposal-muted">Préparé exclusivement pour</p>
+          <p className="proposal-cover-for-company">{data.client.company || "—"}</p>
+          <p className="proposal-cover-for-name proposal-muted">{data.client.name || "—"}</p>
+        </div>
 
-      <div className="proposal-cover-meta">
-        <div>
-          <p className="proposal-cover-meta-label">Client</p>
-          <p className="proposal-cover-meta-value">{data.client.name || "—"}</p>
-        </div>
-        <div>
-          <p className="proposal-cover-meta-label">Société / Cabinet</p>
-          <p className="proposal-cover-meta-value">{data.client.company || "—"}</p>
-        </div>
-        <div>
-          <p className="proposal-cover-meta-label">Date</p>
-          <p className="proposal-cover-meta-value">{formatDateFR(data.client.quoteDate)}</p>
-        </div>
-        <div>
-          <p className="proposal-cover-meta-label">Référence</p>
-          <p className="proposal-cover-meta-value">{data.reference}</p>
-        </div>
-        {data.client.validityPeriod && (
+        <div className="proposal-cover-meta">
           <div>
-            <p className="proposal-cover-meta-label">Validité de l&apos;offre</p>
-            <p className="proposal-cover-meta-value">{data.client.validityPeriod}</p>
+            <p className="proposal-cover-meta-label">Client</p>
+            <p className="proposal-cover-meta-value">{data.client.name || "—"}</p>
           </div>
-        )}
-      </div>
+          <div>
+            <p className="proposal-cover-meta-label">Société / Cabinet</p>
+            <p className="proposal-cover-meta-value">{data.client.company || "—"}</p>
+          </div>
+          <div>
+            <p className="proposal-cover-meta-label">Date</p>
+            <p className="proposal-cover-meta-value">{formatDateFR(data.client.quoteDate)}</p>
+          </div>
+          <div>
+            <p className="proposal-cover-meta-label">Référence</p>
+            <p className="proposal-cover-meta-value">{data.reference}</p>
+          </div>
+          {data.client.validityPeriod && (
+            <div>
+              <p className="proposal-cover-meta-label">Validité de l&apos;offre</p>
+              <p className="proposal-cover-meta-value">{data.client.validityPeriod}</p>
+            </div>
+          )}
+        </div>
 
-      <p className="proposal-cover-footer">YM Studio — Proposition commerciale confidentielle</p>
+        <p className="proposal-cover-footer">YM Studio — Proposition commerciale confidentielle</p>
+      </div>
     </section>
   );
 }
@@ -68,6 +157,11 @@ function MissionPage({ data }: { data: ProposalDocumentData }) {
       <p className="proposal-subheading">Objectifs</p>
       <p className="proposal-prewrap">{data.project.objectives || "—"}</p>
 
+      <p className="proposal-subheading">Notre approche</p>
+      <div className="proposal-approach">
+        <p className="proposal-muted">{APPROACH_COPY}</p>
+      </div>
+
       <div className="proposal-info-grid">
         <div className="proposal-info-box">
           <p className="proposal-cover-meta-label">Délai estimatif</p>
@@ -75,9 +169,12 @@ function MissionPage({ data }: { data: ProposalDocumentData }) {
         </div>
       </div>
 
-      <p className="proposal-subheading">Notre approche</p>
-      <div className="proposal-approach">
-        <p className="proposal-muted">{APPROACH_COPY}</p>
+      <div className="proposal-page-footer proposal-page-footer--pinned">
+        <hr className="proposal-rule proposal-footer-rule" />
+        <div className="proposal-page-footer-row">
+          <span>YM Studio</span>
+          <span>Référence {data.reference}</span>
+        </div>
       </div>
     </section>
   );
@@ -85,7 +182,7 @@ function MissionPage({ data }: { data: ProposalDocumentData }) {
 
 function OfferPage({ data }: { data: ProposalDocumentData }) {
   return (
-    <section className="proposal-page">
+    <section className="proposal-page proposal-force-break">
       <div className="proposal-header">
         <span className="proposal-monogram">YM</span>
         <span className="proposal-wordmark">YM Studio</span>
@@ -135,6 +232,14 @@ function OfferPage({ data }: { data: ProposalDocumentData }) {
           <span className="value">{formatCurrency(data.totals.servicesSubtotal)}</span>
         </div>
       )}
+
+      <div className="proposal-page-footer proposal-page-footer--pinned">
+        <hr className="proposal-rule proposal-footer-rule" />
+        <div className="proposal-page-footer-row">
+          <span>YM Studio</span>
+          <span>Référence {data.reference}</span>
+        </div>
+      </div>
     </section>
   );
 }
@@ -145,7 +250,7 @@ function OptionsAndTermsPage({ data }: { data: ProposalDocumentData }) {
   const futureOptions = data.options.filter((option) => !option.selected);
 
   return (
-    <section className="proposal-page">
+    <section className="proposal-page proposal-force-break">
       <div className="proposal-header">
         <span className="proposal-monogram">YM</span>
         <span className="proposal-wordmark">YM Studio</span>
@@ -286,7 +391,14 @@ function OptionsAndTermsPage({ data }: { data: ProposalDocumentData }) {
           <span className="proposal-signature-line">Date et signature</span>
         </div>
       </div>
-      <p className="proposal-footer-note">Référence {data.reference}</p>
+
+      <div className="proposal-page-footer">
+        <hr className="proposal-rule proposal-footer-rule" />
+        <div className="proposal-page-footer-row">
+          <span>YM Studio</span>
+          <span>Référence {data.reference}</span>
+        </div>
+      </div>
     </section>
   );
 }
