@@ -97,6 +97,16 @@ export async function POST(request: NextRequest) {
       format: "A4",
       printBackground: true,
       preferCSSPageSize: true,
+      // Discreet per-page number in the footer margin. CSS alone can't do
+      // this — Chromium's print engine doesn't implement the `@page`
+      // counter(page) mechanism, only this Puppeteer-level template. It
+      // renders inside the margin box each page's own @page CSS already
+      // reserves (0 on the cover via `@page :first`, 15mm elsewhere), so it
+      // never touches the cover's full-bleed design.
+      displayHeaderFooter: true,
+      headerTemplate: "<span></span>",
+      footerTemplate:
+        '<div style="width:100%;font-size:8px;color:#8a8272;text-align:center;font-family:-apple-system,sans-serif;"><span class="pageNumber"></span></div>',
     });
     log("page.pdf(): done", { bytes: pdfBuffer.length });
 

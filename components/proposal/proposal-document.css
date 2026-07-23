@@ -23,6 +23,14 @@
 
 .proposal-page {
   width: 210mm;
+  /* Floor, not a cap: content taller than one page still grows past this
+     and simply continues fragmenting onto the next physical page. Safe to
+     keep on unconditionally now that every chapter is forced onto its own
+     dedicated page (.proposal-chapter-break below) — a short chapter still
+     fills one full, intentionally composed page instead of stopping
+     halfway, and it gives `margin-top: auto` (running footer, signatures
+     block) actual free space to push against. */
+  min-height: 267mm;
   box-sizing: border-box;
   padding: 0 15mm;
   background: #ffffff;
@@ -44,10 +52,7 @@
 }
 
 /* The cover is a dedicated, full-bleed page — it always starts a fresh
-   document and always occupies exactly one physical page. Every other
-   section flows continuously: short sections no longer force a wasted
-   blank page, and long ones only spill onto a further page when their
-   actual content requires it. */
+   document and always occupies exactly one physical page. */
 .proposal-cover {
   width: 210mm;
   min-height: 297mm; /* full physical page — @page :first removes the margin */
@@ -56,6 +61,16 @@
   background: #0a0a0c;
   break-after: page;
   page-break-after: always;
+}
+
+/* Printed-brochure pagination: every chapter after the cover (Mission,
+   Offre, Options, Résumé financier, Signatures) always starts on a fresh
+   page — two major sections must never share a page, even when the
+   preceding one was short. A long table (Offre/Options) is still free to
+   spill across further pages; only the *start* of each chapter is forced. */
+.proposal-chapter-break {
+  break-before: page;
+  page-break-before: always;
 }
 
 .proposal-cover-art {
@@ -439,14 +454,18 @@
   color: #8a8272;
 }
 
-/* Discreet running branding footer closing each chapter (Mission, Offre,
-   Options) — a thin gold hairline plus the studio name and reference. Not
-   pinned to the physical page bottom: chapters are allowed to share a
-   page when there's room, so a fixed-position footer would otherwise land
-   mid-page between two merged chapters instead of following the content
-   it belongs to. */
+/* Discreet running branding footer closing each chapter — a thin gold
+   hairline plus the logo and reference. */
 .proposal-page-footer {
   margin-top: 16px;
+}
+
+/* Pins the footer to the true physical bottom of the page — used on every
+   chapter except Signatures, where `.proposal-signatures` already claims
+   the flex free-space (via its own margin-top: auto) and the footer just
+   follows it with the normal small margin above instead. */
+.proposal-page-footer--pinned {
+  margin-top: auto;
 }
 
 .proposal-footer-rule {
