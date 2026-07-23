@@ -193,7 +193,10 @@ function MissionPage({ data }: { data: ProposalDocumentData }) {
   );
 }
 
-function OfferPage({ data }: { data: ProposalDocumentData }) {
+function OfferAndOptionsPage({ data }: { data: ProposalDocumentData }) {
+  const includedOptions = data.options.filter((option) => option.selected);
+  const futureOptions = data.options.filter((option) => !option.selected);
+
   return (
     <section className="proposal-page proposal-chapter-break">
       <div className="proposal-header">
@@ -244,28 +247,6 @@ function OfferPage({ data }: { data: ProposalDocumentData }) {
           <span className="value">{formatCurrency(data.totals.servicesSubtotal)}</span>
         </div>
       )}
-
-      <div className="proposal-page-footer proposal-page-footer--pinned">
-        <hr className="proposal-rule proposal-footer-rule" />
-        <div className="proposal-page-footer-row">
-          <LogoMark variant="black" width={80} />
-          <span>Référence {data.reference}</span>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function OptionsPage({ data }: { data: ProposalDocumentData }) {
-  const includedOptions = data.options.filter((option) => option.selected);
-  const futureOptions = data.options.filter((option) => !option.selected);
-
-  return (
-    <section className="proposal-page proposal-chapter-break">
-      <div className="proposal-header">
-        <LogoMark variant="black" width={110} />
-      </div>
-      <hr className="proposal-rule" />
 
       <h2 className="proposal-heading">Options et conditions</h2>
 
@@ -342,7 +323,7 @@ function OptionsPage({ data }: { data: ProposalDocumentData }) {
   );
 }
 
-function FinancialSummaryPage({ data }: { data: ProposalDocumentData }) {
+function FinancialSummaryAndSignaturePage({ data }: { data: ProposalDocumentData }) {
   const { totals } = data;
 
   return (
@@ -412,25 +393,6 @@ function FinancialSummaryPage({ data }: { data: ProposalDocumentData }) {
         </>
       )}
 
-      <div className="proposal-page-footer proposal-page-footer--pinned">
-        <hr className="proposal-rule proposal-footer-rule" />
-        <div className="proposal-page-footer-row">
-          <LogoMark variant="black" width={80} />
-          <span>Référence {data.reference}</span>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function SignaturePage({ data }: { data: ProposalDocumentData }) {
-  return (
-    <section className="proposal-page proposal-chapter-break">
-      <div className="proposal-header">
-        <LogoMark variant="black" width={110} />
-      </div>
-      <hr className="proposal-rule" />
-
       <h2 className="proposal-heading">Signatures</h2>
 
       <div className="proposal-signatures">
@@ -462,10 +424,8 @@ export function ProposalDocument({ data }: { data: ProposalDocumentData }) {
     <div className="proposal-document">
       <CoverPage data={data} />
       <MissionPage data={data} />
-      <OfferPage data={data} />
-      <OptionsPage data={data} />
-      <FinancialSummaryPage data={data} />
-      <SignaturePage data={data} />
+      <OfferAndOptionsPage data={data} />
+      <FinancialSummaryAndSignaturePage data={data} />
     </div>
   );
 }
