@@ -23,16 +23,6 @@
 
 .proposal-page {
   width: 210mm;
-  /* Floor, not a cap: content taller than one page still grows past this
-     and simply continues fragmenting onto the next physical page as
-     before. This only matters for a page shorter than one A4 — with the
-     fixed narrative structure below (each chapter forced onto its own
-     page), it stretches a short chapter to fill exactly one full page,
-     which is also what gives `margin-top: auto` (used by the running
-     footer and the signatures block) an actual page's worth of free
-     space to push against — without it, a flex column with auto height
-     has nothing for an auto margin to distribute. */
-  min-height: 267mm;
   box-sizing: border-box;
   padding: 0 15mm;
   background: #ffffff;
@@ -84,10 +74,6 @@
   color: #f2ede1;
 }
 
-.proposal-cover-content .proposal-wordmark {
-  color: #f5f1e6;
-}
-
 .proposal-cover-content .proposal-muted {
   color: #c7bfae;
 }
@@ -112,15 +98,6 @@
   color: #a89b7d;
 }
 
-/* Forces the Offre and Options/Conditions chapters to always begin on a
-   fresh page, even when the previous chapter was short — the fixed
-   narrative structure (Couverture / Mission / Offre / Options) takes
-   priority over minimizing page count for this document. */
-.proposal-force-break {
-  break-before: page;
-  page-break-before: always;
-}
-
 @media screen {
   .proposal-page {
     margin-bottom: 24px;
@@ -141,23 +118,17 @@
   gap: 10px;
 }
 
-.proposal-monogram {
-  display: flex;
-  height: 34px;
-  width: 34px;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-  background: #c9a45c;
-  color: #1a1a1a;
-  font-weight: 700;
-  font-size: 12pt;
-}
-
-.proposal-wordmark {
-  font-weight: 600;
-  font-size: 11pt;
-  letter-spacing: 0.02em;
+/* Official YM Studio logo — the sole brand mark used throughout the PDF
+   (white variant on the dark cover, black variant on every light-
+   background page/header/footer). Width is set per instance via inline
+   style (~210px cover, ~110px interior headers, ~80px footers); height
+   always stays auto and object-fit: contain guarantees the original
+   proportions are preserved — never stretched, cropped, or distorted. No
+   filters, shadows, background, or color inversion are applied. */
+.proposal-logo {
+  display: block;
+  height: auto;
+  object-fit: contain;
 }
 
 .proposal-eyebrow {
@@ -468,20 +439,14 @@
   color: #8a8272;
 }
 
-/* Discreet running branding footer, repeated identically on every content
-   page (not just the last) — a thin gold hairline plus the studio name and
-   reference, always at the same visual weight across the document. */
+/* Discreet running branding footer closing each chapter (Mission, Offre,
+   Options) — a thin gold hairline plus the studio name and reference. Not
+   pinned to the physical page bottom: chapters are allowed to share a
+   page when there's room, so a fixed-position footer would otherwise land
+   mid-page between two merged chapters instead of following the content
+   it belongs to. */
 .proposal-page-footer {
   margin-top: 16px;
-}
-
-/* On pages with no other bottom-pinned element (Mission, Offre), the
-   footer itself claims the remaining flex space so it always sits at the
-   physical bottom of the page rather than right after the last block of
-   content. On the closing page the signatures already do this job, so the
-   footer there just follows them with the normal margin above. */
-.proposal-page-footer--pinned {
-  margin-top: auto;
 }
 
 .proposal-footer-rule {
@@ -491,6 +456,7 @@
 
 .proposal-page-footer-row {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   font-size: 8.5pt;
   color: #8a8272;

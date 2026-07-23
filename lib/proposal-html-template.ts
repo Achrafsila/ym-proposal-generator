@@ -1,6 +1,7 @@
 import type { ProposalDocumentData } from "@/lib/build-document-data";
 import { escapeHtml } from "@/lib/escape-html";
 import { formatCurrency, formatDateFR } from "@/lib/format";
+import { YM_LOGO_BLACK_DATA_URI, YM_LOGO_WHITE_DATA_URI } from "@/lib/proposal-logo-assets";
 
 const APPROACH_COPY =
   "Chez YM Studio, nous concevons des expériences digitales sur mesure, en alliant un design premium, une exécution technique soignée et un accompagnement personnalisé à chaque étape du projet. Notre objectif est de livrer un résultat à la hauteur de votre image de marque, dans les délais convenus.";
@@ -55,11 +56,22 @@ function fallback(value: string | undefined | null): string {
   return escaped || "—";
 }
 
-function brandHeader(): string {
+/**
+ * Official YM Studio logo — white-on-transparent on dark backgrounds
+ * (the cover), black-on-transparent everywhere else (interior pages,
+ * headers, footers, signatures). `height: auto` and no other sizing keep
+ * the original proportions intact; only `width` varies by context, and
+ * `object-fit: contain` (in CSS) guarantees it's never stretched.
+ */
+function logoMarkHtml(variant: "white" | "black", widthPx: number): string {
+  const src = variant === "white" ? YM_LOGO_WHITE_DATA_URI : YM_LOGO_BLACK_DATA_URI;
+  return `<img src="${src}" alt="YM Studio" class="proposal-logo" style="width:${widthPx}px" />`;
+}
+
+function brandHeader(dark = false): string {
   return `
     <div class="proposal-header">
-      <span class="proposal-monogram">YM</span>
-      <span class="proposal-wordmark">YM Studio</span>
+      ${dark ? logoMarkHtml("white", 210) : logoMarkHtml("black", 110)}
     </div>`;
 }
 
@@ -77,7 +89,7 @@ function coverPageHtml(data: ProposalDocumentData): string {
   <section class="proposal-page proposal-cover">
     ${coverArtHtml()}
     <div class="proposal-cover-content">
-      ${brandHeader()}
+      ${brandHeader(true)}
       <div class="proposal-cover-title">
         <p class="proposal-eyebrow">Proposition commerciale</p>
         <h1 class="proposal-cover-project">${fallback(project.title) === "—" ? "Projet à définir" : esc(project.title)}</h1>
@@ -136,10 +148,10 @@ function missionPageHtml(data: ProposalDocumentData): string {
       </div>
     </div>
 
-    <div class="proposal-page-footer proposal-page-footer--pinned">
+    <div class="proposal-page-footer">
       <hr class="proposal-rule proposal-footer-rule" />
       <div class="proposal-page-footer-row">
-        <span>YM Studio</span>
+        ${logoMarkHtml("black", 80)}
         <span>Référence ${esc(data.reference)}</span>
       </div>
     </div>
@@ -195,16 +207,16 @@ function offerPageHtml(data: ProposalDocumentData): string {
     </div>`;
 
   return `
-  <section class="proposal-page proposal-force-break">
+  <section class="proposal-page">
     ${brandHeader()}
     <hr class="proposal-rule" />
     <h2 class="proposal-heading">Offre proposée</h2>
     ${servicesBlock}
 
-    <div class="proposal-page-footer proposal-page-footer--pinned">
+    <div class="proposal-page-footer">
       <hr class="proposal-rule proposal-footer-rule" />
       <div class="proposal-page-footer-row">
-        <span>YM Studio</span>
+        ${logoMarkHtml("black", 80)}
         <span>Référence ${esc(data.reference)}</span>
       </div>
     </div>
@@ -299,7 +311,7 @@ function optionsAndTermsPageHtml(data: ProposalDocumentData): string {
     : "";
 
   return `
-  <section class="proposal-page proposal-force-break">
+  <section class="proposal-page">
     ${brandHeader()}
     <hr class="proposal-rule" />
     <h2 class="proposal-heading">Options et conditions</h2>
@@ -370,7 +382,7 @@ function optionsAndTermsPageHtml(data: ProposalDocumentData): string {
     <div class="proposal-page-footer">
       <hr class="proposal-rule proposal-footer-rule" />
       <div class="proposal-page-footer-row">
-        <span>YM Studio</span>
+        ${logoMarkHtml("black", 80)}
         <span>Référence ${esc(reference)}</span>
       </div>
     </div>

@@ -7,6 +7,21 @@ const APPROACH_COPY =
 const COVER_FONT_STACK =
   'ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
 
+/**
+ * Official YM Studio logo — white-on-transparent on dark backgrounds
+ * (the cover), black-on-transparent everywhere else (interior pages,
+ * headers, footers, signatures). `height: auto` and no other sizing keep
+ * the original proportions intact; only `width` varies by context, and
+ * `object-fit: contain` (in CSS) guarantees it's never stretched.
+ */
+function LogoMark({ variant, width }: { variant: "white" | "black"; width: number }) {
+  const src = variant === "white" ? "/branding/ym-logo-white.svg" : "/branding/ym-logo-black.svg";
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src={src} alt="YM Studio" className="proposal-logo" style={{ width }} />
+  );
+}
+
 function CoverArt() {
   return (
     <svg
@@ -97,8 +112,7 @@ function CoverPage({ data }: { data: ProposalDocumentData }) {
       <CoverArt />
       <div className="proposal-cover-content">
         <div className="proposal-header">
-          <span className="proposal-monogram">YM</span>
-          <span className="proposal-wordmark">YM Studio</span>
+          <LogoMark variant="white" width={210} />
         </div>
 
         <div className="proposal-cover-title">
@@ -144,8 +158,7 @@ function MissionPage({ data }: { data: ProposalDocumentData }) {
   return (
     <section className="proposal-page">
       <div className="proposal-header">
-        <span className="proposal-monogram">YM</span>
-        <span className="proposal-wordmark">YM Studio</span>
+        <LogoMark variant="black" width={110} />
       </div>
       <hr className="proposal-rule" />
 
@@ -169,10 +182,10 @@ function MissionPage({ data }: { data: ProposalDocumentData }) {
         </div>
       </div>
 
-      <div className="proposal-page-footer proposal-page-footer--pinned">
+      <div className="proposal-page-footer">
         <hr className="proposal-rule proposal-footer-rule" />
         <div className="proposal-page-footer-row">
-          <span>YM Studio</span>
+          <LogoMark variant="black" width={80} />
           <span>Référence {data.reference}</span>
         </div>
       </div>
@@ -182,10 +195,9 @@ function MissionPage({ data }: { data: ProposalDocumentData }) {
 
 function OfferPage({ data }: { data: ProposalDocumentData }) {
   return (
-    <section className="proposal-page proposal-force-break">
+    <section className="proposal-page">
       <div className="proposal-header">
-        <span className="proposal-monogram">YM</span>
-        <span className="proposal-wordmark">YM Studio</span>
+        <LogoMark variant="black" width={110} />
       </div>
       <hr className="proposal-rule" />
 
@@ -233,10 +245,10 @@ function OfferPage({ data }: { data: ProposalDocumentData }) {
         </div>
       )}
 
-      <div className="proposal-page-footer proposal-page-footer--pinned">
+      <div className="proposal-page-footer">
         <hr className="proposal-rule proposal-footer-rule" />
         <div className="proposal-page-footer-row">
-          <span>YM Studio</span>
+          <LogoMark variant="black" width={80} />
           <span>Référence {data.reference}</span>
         </div>
       </div>
@@ -250,10 +262,9 @@ function OptionsAndTermsPage({ data }: { data: ProposalDocumentData }) {
   const futureOptions = data.options.filter((option) => !option.selected);
 
   return (
-    <section className="proposal-page proposal-force-break">
+    <section className="proposal-page">
       <div className="proposal-header">
-        <span className="proposal-monogram">YM</span>
-        <span className="proposal-wordmark">YM Studio</span>
+        <LogoMark variant="black" width={110} />
       </div>
       <hr className="proposal-rule" />
 
@@ -395,7 +406,7 @@ function OptionsAndTermsPage({ data }: { data: ProposalDocumentData }) {
       <div className="proposal-page-footer">
         <hr className="proposal-rule proposal-footer-rule" />
         <div className="proposal-page-footer-row">
-          <span>YM Studio</span>
+          <LogoMark variant="black" width={80} />
           <span>Référence {data.reference}</span>
         </div>
       </div>
